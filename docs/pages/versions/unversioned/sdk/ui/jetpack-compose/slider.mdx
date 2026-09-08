@@ -1,6 +1,6 @@
 ---
 title: Slider
-description: A Jetpack Compose Slider component for selecting values from a range.
+description: Jetpack Compose slider components for selecting values and ranges.
 sourceCodeUrl: 'https://github.com/expo/expo/tree/main/packages/expo-ui'
 packageName: '@expo/ui'
 platforms: ['android', 'expo-go']
@@ -55,6 +55,32 @@ export default function BasicSliderExample() {
 ```
 
 </ComponentExample>
+
+### Range slider
+
+Use `RangeSlider` to select the start and end values of a range. The thumbs cannot cross each other.
+
+```tsx
+import { useState } from 'react';
+import { Host, RangeSlider } from '@expo/ui/jetpack-compose';
+
+export default function RangeSliderExample() {
+  const [value, setValue] = useState({ start: 20, end: 80 });
+
+  return (
+    <Host
+      matchContents={{ vertical: true }}
+      style={{ width: '100%' }}>
+      <RangeSlider
+        value={value}
+        min={0}
+        max={100}
+        onValueChange={setValue}
+      />
+    </Host>
+  );
+}
+```
 
 ### Slider with custom range
 
@@ -261,7 +287,11 @@ export default function VerticalSliderExample() {
 ## API
 
 ```tsx
-import { Slider, VerticalSlider } from '@expo/ui/jetpack-compose';
+import {
+  RangeSlider,
+  Slider,
+  VerticalSlider,
+} from '@expo/ui/jetpack-compose';
 ```
 
 <APISection

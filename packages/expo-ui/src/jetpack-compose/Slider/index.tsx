@@ -94,6 +94,25 @@ export interface VerticalSliderProps extends SliderProps {
   reverseDirection?: boolean;
 }
 
+export type RangeSliderValue = {
+  /** The start of the selected range. */
+  start: number;
+  /** The end of the selected range. */
+  end: number;
+};
+
+export interface RangeSliderProps extends Omit<SliderProps, 'value' | 'onValueChange'> {
+  /**
+   * The currently selected range.
+   * @default { start: 0, end: 1 }
+   */
+  value?: RangeSliderValue;
+  /**
+   * Callback triggered when either thumb is dragged along the slider.
+   */
+  onValueChange?: (value: RangeSliderValue) => void;
+}
+
 type NativeSliderProps = Omit<SliderProps, 'onValueChange' | 'onValueChangeFinished' | 'children'> &
   ViewEvent<'onValueChange', { value: number }> &
   ViewEvent<'onValueChangeFinished', void> & { children?: React.ReactNode };
@@ -106,6 +125,18 @@ const SliderNativeView: React.ComponentType<NativeSliderProps> = requireNativeVi
 const VerticalSliderNativeView: React.ComponentType<
   NativeSliderProps & Pick<VerticalSliderProps, 'reverseDirection'>
 > = requireNativeView('ExpoUI', 'VerticalSliderView');
+
+type NativeRangeSliderProps = Omit<
+  RangeSliderProps,
+  'onValueChange' | 'onValueChangeFinished' | 'children'
+> &
+  ViewEvent<'onValueChange', RangeSliderValue> &
+  ViewEvent<'onValueChangeFinished', void> & { children?: React.ReactNode };
+
+const RangeSliderNativeView: React.ComponentType<NativeRangeSliderProps> = requireNativeView(
+  'ExpoUI',
+  'RangeSliderView'
+);
 
 function transformSliderProps(
   props: Omit<SliderProps, 'children'>
@@ -129,9 +160,32 @@ function transformSliderProps(
   };
 }
 
+function transformRangeSliderProps(
+  props: Omit<RangeSliderProps, 'children'>
+): Omit<NativeRangeSliderProps, 'children'> {
+  const { modifiers, onValueChange, onValueChangeFinished, ...restProps } = props;
+  return {
+    modifiers,
+    ...(modifiers ? createViewModifierEventListener(modifiers) : undefined),
+    ...restProps,
+    min: props.min ?? 0,
+    max: props.max ?? 1,
+    steps: props.steps ?? 0,
+    value: props.value ?? { start: 0, end: 1 },
+    enabled: props.enabled ?? true,
+    onValueChange: onValueChange
+      ? ({ nativeEvent: { start, end } }) => {
+          onValueChange({ start, end });
+        }
+      : undefined,
+    onValueChangeFinished: onValueChangeFinished ? () => onValueChangeFinished() : undefined,
+  };
+}
+
 /**
- * A custom thumb slot for `Slider` and `VerticalSlider`.
+ * A custom thumb slot for `Slider`, `VerticalSlider`, and `RangeSlider`.
  * Wrap any content to use as the slider's thumb indicator.
+ * `RangeSlider` uses the content for both thumbs.
  *
  * @platform android
  */
@@ -140,7 +194,7 @@ function Thumb(props: { children: React.ReactNode }) {
 }
 
 /**
- * A custom track slot for `Slider` and `VerticalSlider`.
+ * A custom track slot for `Slider`, `VerticalSlider`, and `RangeSlider`.
  * Wrap any content to use as the slider's track.
  *
  * @platform android
@@ -180,5 +234,22 @@ export function VerticalSlider(props: VerticalSliderProps) {
 
 VerticalSlider.Thumb = Thumb;
 VerticalSlider.Track = Track;
+
+/**
+ * A range slider component that wraps Material3's `RangeSlider`.
+ *
+ * @platform android
+ */
+export function RangeSlider(props: RangeSliderProps) {
+  const { children, ...restProps } = props;
+  return (
+    <RangeSliderNativeView {...transformRangeSliderProps(restProps)}>
+      {children}
+    </RangeSliderNativeView>
+  );
+}
+
+RangeSlider.Thumb = Thumb;
+RangeSlider.Track = Track;
 
 export { SliderComponent as Slider };
