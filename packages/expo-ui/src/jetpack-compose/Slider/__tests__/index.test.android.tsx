@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react-native';
 import { View } from 'react-native';
 
-import { VerticalSlider } from '..';
+import { RangeSlider, VerticalSlider } from '..';
 
 const mockNativeViewFn = jest.fn();
 
@@ -26,6 +26,10 @@ beforeEach(() => {
 
 function getVerticalSliderProps() {
   return mockNativeViewFn.mock.calls.find(([viewName]) => viewName === 'VerticalSliderView')?.[1];
+}
+
+function getRangeSliderProps() {
+  return mockNativeViewFn.mock.calls.find(([viewName]) => viewName === 'RangeSliderView')?.[1];
 }
 
 describe('VerticalSlider', () => {
@@ -75,5 +79,81 @@ describe('VerticalSlider', () => {
 
     expect(getByTestId('vertical-slider-thumb')).toBeTruthy();
     expect(getByTestId('vertical-slider-track')).toBeTruthy();
+  });
+});
+
+describe('RangeSlider', () => {
+  it('passes range slider props to the native view', () => {
+    const colors = { thumbColor: '#ff0000', activeTrackColor: '#00ff00' };
+    render(
+      <RangeSlider
+        value={{ start: 2, end: 8 }}
+        min={0}
+        max={10}
+        lowerLimit={1}
+        upperLimit={9}
+        steps={4}
+        enabled={false}
+        colors={colors}
+      />
+    );
+
+    expect(getRangeSliderProps()).toEqual(
+      expect.objectContaining({
+        value: { start: 2, end: 8 },
+        min: 0,
+        max: 10,
+        lowerLimit: 1,
+        upperLimit: 9,
+        steps: 4,
+        enabled: false,
+        colors,
+      })
+    );
+  });
+
+  it('uses defaults matching the full slider range', () => {
+    render(<RangeSlider />);
+
+    expect(getRangeSliderProps()).toEqual(
+      expect.objectContaining({
+        value: { start: 0, end: 1 },
+        min: 0,
+        max: 1,
+        steps: 0,
+        enabled: true,
+      })
+    );
+  });
+
+  it('unwraps native range value change events', () => {
+    const onValueChange = jest.fn();
+    const onValueChangeFinished = jest.fn();
+    render(
+      <RangeSlider onValueChange={onValueChange} onValueChangeFinished={onValueChangeFinished} />
+    );
+
+    const props = getRangeSliderProps();
+    props.onValueChange({ nativeEvent: { start: 0.25, end: 0.75 } });
+    props.onValueChangeFinished();
+
+    expect(onValueChange).toHaveBeenCalledWith({ start: 0.25, end: 0.75 });
+    expect(onValueChangeFinished).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders custom thumb and track slots', () => {
+    const { getByTestId } = render(
+      <RangeSlider>
+        <RangeSlider.Thumb>
+          <View testID="range-slider-thumb" />
+        </RangeSlider.Thumb>
+        <RangeSlider.Track>
+          <View testID="range-slider-track" />
+        </RangeSlider.Track>
+      </RangeSlider>
+    );
+
+    expect(getByTestId('range-slider-thumb')).toBeTruthy();
+    expect(getByTestId('range-slider-track')).toBeTruthy();
   });
 });
