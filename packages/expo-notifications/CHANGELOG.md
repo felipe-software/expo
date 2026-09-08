@@ -8,6 +8,7 @@
 
 ### 🎉 New features
 
+- [Android] Add an `enableBigPictureStyle` config plugin property to display remote notification images in the expanded notification layout.
 - [ios] Forward notification center calls to a `UNUserNotificationCenterDelegate` that another library set, so that both libraries keep working. ([#48313](https://github.com/expo/expo/pull/48313) by [@vonovak](https://github.com/vonovak))
 - [ios] Add support for grouping notifications via `threadIdentifier`. ([#49429](https://github.com/expo/expo/pull/49429) by [@vonovak](https://github.com/vonovak))
 - [Android] Add a `largeIcon` config plugin property that sets the notification large icon. ([#49481](https://github.com/expo/expo/pull/49481) by [@expo-bot](https://github.com/expo-bot))
