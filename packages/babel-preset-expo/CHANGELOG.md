@@ -6,6 +6,20 @@
 
 ### 🎉 New features
 
+### 🐛 Bug fixes
+
+### 💡 Others
+
+## 58.0.1 — 2026-09-14
+
+### 💡 Others
+
+- Upgrade React Native to 0.88.0-rc.0 ([#49910](https://github.com/expo/expo/pull/49910) by [@gabrieldonadel](https://github.com/gabrieldonadel))
+
+## 58.0.0 — 2026-09-10
+
+### 🎉 New features
+
 - Add `ios`, `android`, `macos`, `tvos` per-platform override support ([#46508](https://github.com/expo/expo/pull/46508) by [@kitten](https://github.com/kitten))
 
 ### 🐛 Bug fixes

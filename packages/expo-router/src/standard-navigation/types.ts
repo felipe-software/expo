@@ -76,6 +76,10 @@ export interface StandardNavigatorCreatePropsFactoryDeps<State extends Navigatio
   dispatch: (action: NavigationAction) => void;
   dispatchSync: (action: NavigationAction) => void;
   navigation: NavigationHelpers<ParamListBase>;
+  /** Returns whether the route with the given key is preloaded. */
+  isPreloaded: (key: string) => boolean;
+  /** Returns whether removal is prevented for the route with the given key. */
+  isRemovalPrevented: (key: string) => boolean;
 }
 
 /**
@@ -116,6 +120,11 @@ export type IntegrateWithRouterOptions<
   NavigatorOptions extends object = Record<string, any>,
   EventMap extends EventMapBase = EventMapBase,
 > = CreatePropsOption<State, CreateProps> & {
+  /**
+   * Number of screens above a route that hides its content when `activityEnabled` is `true`.
+   * @default 1
+   */
+  activityDefaultThreshold?: number;
   /**
    * Pre-processes the builder state before it is converted to standard-navigation state.
    *
@@ -199,7 +208,7 @@ type NavigatorContentInferenceCarrier<
 
 /**
  * Props for a standard navigator's `NavigatorContent` component. Annotate your content component
- * with this type to declare the events it emits, so `unstable_createStandardRouterNavigator` can
+ * with this type to declare the events it emits, so `createStandardRouterNavigator` can
  * type `emitter.emit` for you.
  *
  * @example
