@@ -358,6 +358,14 @@ class ExpoUIModule : Module() {
       }
     }
 
+    ExpoUIView<RangeSliderProps>("RangeSliderView") {
+      Events("onValueChange", "onValueChangeFinished")
+
+      Content { props ->
+        RangeSliderContent(props)
+      }
+    }
+
     ExpoUIView<ShapeProps>("ShapeView") {
       Content { props ->
         ShapeContent(props)

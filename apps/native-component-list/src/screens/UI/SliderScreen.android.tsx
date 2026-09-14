@@ -1,5 +1,6 @@
 import {
   Host,
+  RangeSlider,
   Slider,
   VerticalSlider,
   Shape,
@@ -29,6 +30,10 @@ export default function SliderScreen() {
   const [fullCustomValue, setFullCustomValue] = React.useState(0.5);
   const [verticalValue, setVerticalValue] = React.useState(0.25);
   const [reversedVerticalValue, setReversedVerticalValue] = React.useState(0.75);
+  const [selectedRange, setSelectedRange] = React.useState({
+    start: 0.25,
+    end: 0.75,
+  });
   return (
     <Host style={{ flex: 1 }}>
       <LazyColumn verticalArrangement={{ spacedBy: 16 }} modifiers={[padding(16, 16, 16, 16)]}>
@@ -37,6 +42,15 @@ export default function SliderScreen() {
             <ComposeText>Default</ComposeText>
             <ComposeText>Default Material3 slider with no customization.</ComposeText>
             <Slider />
+          </Column>
+        </Card>
+        <Card modifiers={[fillMaxWidth()]}>
+          <Column verticalArrangement={{ spacedBy: 12 }} modifiers={[padding(16, 16, 16, 16)]}>
+            <ComposeText>Range</ComposeText>
+            <ComposeText>
+              Selected range: {selectedRange.start.toFixed(2)}–{selectedRange.end.toFixed(2)}
+            </ComposeText>
+            <RangeSlider value={selectedRange} onValueChange={setSelectedRange} />
           </Column>
         </Card>
         <Card modifiers={[fillMaxWidth()]}>
